@@ -10,7 +10,7 @@ nav = [
   { "Get started" = [
     { "Welcome" = "index.md" },
     { "Install" = "installation.md" },
-    { "Short tutorials" = "tutorials.md" }
+    { "Tutorials" = "tutorials.md" }
   ] },
   { "Reference" = [
     { "Prepare a workspace" = "workspaces.md" },

@@ -1,4 +1,4 @@
-# Short tutorials
+# Tutorials
 
 These tutorials use the desktop GUI. [Install REMAIN](installation.md) first.
 
