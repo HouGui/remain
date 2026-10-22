@@ -1,0 +1,20 @@
+name: Build documentation
+description: Build the strict user guide and public Rust API with cached dependencies.
+runs:
+  using: composite
+  steps:
+    - uses: ./.github/actions/setup-rust
+      with:
+        cache-key: documentation
+        workspaces: '. -> target/documentation'
+    - uses: actions/setup-python@v7
+      with:
+        python-version: '3.12'
+        cache: pip
+        cache-dependency-path: docs/requirements.txt
+    - name: Install documentation dependencies
+      shell: bash
+      run: python -m pip install -r docs/requirements.txt
+    - name: Build user guide and Rust API
+      shell: bash
+      run: bash scripts/build-docs.sh

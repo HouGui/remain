@@ -1,0 +1,4 @@
+id,label,group,category,parent
+atlas,Offenes Lernen,discovery,,
+nova,Zirkuläre Materialien,applications,circularity,
+orbit,Pilotprojekt Wiederverwendung,applications,circularity,nova

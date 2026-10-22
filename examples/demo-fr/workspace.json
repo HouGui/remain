@@ -1,0 +1,71 @@
+{
+  "schema_version": 2,
+  "title": "Organisation fictive · Rapport de portefeuille",
+  "locale": "fr",
+  "period": "2026",
+  "annex": {
+    "sheet": "Indicateurs",
+    "header_row": 1
+  },
+  "groups": [
+    {
+      "id": "discovery",
+      "label": "Recherche et éducation"
+    },
+    {
+      "id": "applications",
+      "label": "Applications industrielles"
+    }
+  ],
+  "categories": [
+    {
+      "id": "circularity",
+      "label": "Économie circulaire"
+    }
+  ],
+  "projects": "projects.csv",
+  "inputs": {
+    "directory": "{id}",
+    "documents": [
+      {
+        "label": "Rapport",
+        "pattern": "part-*.pdf",
+        "required": true
+      },
+      {
+        "label": "Annexe des indicateurs",
+        "pattern": "annex.xlsx",
+        "required": false
+      }
+    ]
+  },
+  "metrics": [
+    {
+      "id": "publications",
+      "label": "Publications",
+      "column": "Publications",
+      "aggregation": "sum",
+      "missing": "error",
+      "unit": "",
+      "decimals": 0
+    },
+    {
+      "id": "patents",
+      "label": "Brevets",
+      "column": "Brevets",
+      "aggregation": "sum",
+      "missing": "error",
+      "unit": "",
+      "decimals": 0
+    },
+    {
+      "id": "quality",
+      "label": "Indice de qualité",
+      "column": "Indice de qualité",
+      "aggregation": "mean",
+      "missing": "skip",
+      "unit": "",
+      "decimals": 2
+    }
+  ]
+}

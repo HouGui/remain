@@ -1,0 +1,71 @@
+{
+  "schema_version": 2,
+  "title": "Example organization · Portfolio report",
+  "locale": "en",
+  "period": "2026",
+  "annex": {
+    "sheet": "KPIs",
+    "header_row": 1
+  },
+  "groups": [
+    {
+      "id": "discovery",
+      "label": "Discovery and education"
+    },
+    {
+      "id": "applications",
+      "label": "Industrial applications"
+    }
+  ],
+  "categories": [
+    {
+      "id": "circularity",
+      "label": "Circularity"
+    }
+  ],
+  "projects": "projects.csv",
+  "inputs": {
+    "directory": "{id}",
+    "documents": [
+      {
+        "label": "Report",
+        "pattern": "part-*.pdf",
+        "required": true
+      },
+      {
+        "label": "KPI annex",
+        "pattern": "annex.xlsx",
+        "required": false
+      }
+    ]
+  },
+  "metrics": [
+    {
+      "id": "publications",
+      "label": "Publications",
+      "column": "Publications",
+      "aggregation": "sum",
+      "missing": "error",
+      "unit": "",
+      "decimals": 0
+    },
+    {
+      "id": "patents",
+      "label": "Patents",
+      "column": "Patents",
+      "aggregation": "sum",
+      "missing": "error",
+      "unit": "",
+      "decimals": 0
+    },
+    {
+      "id": "quality",
+      "label": "Quality score",
+      "column": "Quality score",
+      "aggregation": "mean",
+      "missing": "skip",
+      "unit": "",
+      "decimals": 2
+    }
+  ]
+}

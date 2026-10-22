@@ -1,0 +1,80 @@
+name: Checks
+on:
+  push:
+    branches: ['**']
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+defaults:
+  run:
+    shell: bash
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_BUILD_JOBS: 2
+jobs:
+  rust:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-latest, macos-14]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check PowerShell syntax
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Get-ChildItem scripts/*.ps1 | ForEach-Object {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$errors) | Out-Null
+            if ($errors.Count) { throw ($errors | Out-String) }
+          }
+      - uses: ./.github/actions/setup-rust
+        with:
+          components: rustfmt,clippy
+      - name: Linux libraries
+        if: runner.os == 'Linux'
+        run: bash scripts/install-linux-deps.sh
+      - name: Check formatting and shell scripts
+        if: runner.os == 'Linux'
+        run: |
+          cargo fmt --all --check
+          shellcheck scripts/*.sh packaging/linux/install.sh
+      - run: cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+      - run: cargo test --workspace --locked
+      - name: Large portfolio integration test
+        if: runner.os == 'Linux'
+        run: cargo test --locked -p remain-core --test scalability -- --ignored --nocapture
+      - run: cargo doc --workspace --no-deps --locked
+        if: runner.os == 'Linux'
+        env:
+          RUSTDOCFLAGS: -D warnings
+  minimum-rust:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Linux libraries
+        run: bash scripts/install-linux-deps.sh
+      - name: Read the minimum Rust version
+        id: msrv
+        run: |
+          msrv="$(cargo metadata --format-version 1 --no-deps --locked | python3 -c 'import json, sys; print(next(p["rust_version"] for p in json.load(sys.stdin)["packages"] if p["name"] == "remain-core"))')"
+          echo "version=$msrv" >> "$GITHUB_OUTPUT"
+      - uses: ./.github/actions/setup-rust
+        with:
+          toolchain: ${{ steps.msrv.outputs.version }}
+      - run: cargo check --workspace --all-targets --all-features --locked
+  docs:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/build-docs
+      - uses: actions/upload-artifact@v7
+        with:
+          name: documentation
+          path: site/
+          if-no-files-found: error

@@ -1,0 +1,37 @@
+[package]
+name = "remain-app"
+description = "REMAIN desktop report manager"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+default-run = "remain"
+
+[[bin]]
+name = "remain"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+eframe.workspace = true
+remain-core = { path = "../remain-core" }
+rfd.workspace = true
+serde_json.workspace = true
+tempfile.workspace = true
+ttf-parser.workspace = true
+
+[build-dependencies]
+winresource = { version = "0.1", default-features = false }
+
+[features]
+# Developer-only capture support; normal release binaries do not enable it.
+preview = ["eframe/__screenshot"]
+
+[[example]]
+name = "gui_preview"
+required-features = ["preview"]
+test = false
+
+[lints]
+workspace = true

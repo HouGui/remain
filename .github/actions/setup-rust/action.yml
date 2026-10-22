@@ -1,0 +1,34 @@
+name: Set up Rust
+description: Select the toolchain and restore its Cargo dependency cache.
+inputs:
+  toolchain:
+    description: Rust toolchain to install
+    default: stable
+  components:
+    description: Optional comma-separated Rust components
+    default: ''
+  cache-key:
+    description: Cache group for checks, packages, or documentation
+    default: checks
+  workspaces:
+    description: Cargo workspace and target-directory mapping
+    default: '. -> target'
+runs:
+  using: composite
+  steps:
+    - name: Install Rust
+      shell: bash
+      env:
+        REMAIN_TOOLCHAIN: ${{ inputs.toolchain }}
+        REMAIN_COMPONENTS: ${{ inputs.components }}
+      run: |
+        args=(toolchain install "$REMAIN_TOOLCHAIN" --profile minimal --no-self-update)
+        if [[ -n "$REMAIN_COMPONENTS" ]]; then
+          args+=(--component "$REMAIN_COMPONENTS")
+        fi
+        rustup "${args[@]}"
+        rustup default "$REMAIN_TOOLCHAIN"
+    - uses: Swatinem/rust-cache@v2
+      with:
+        shared-key: ${{ inputs.cache-key }}
+        workspaces: ${{ inputs.workspaces }}

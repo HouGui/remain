@@ -1,0 +1,32 @@
+# Build output, documentation, and release packages
+/target/
+/dist/
+/site/
+/.cache/
+/.venv/
+/.venv-docs/
+
+# Local submissions and generated reports; examples/ stays versioned
+/workspaces/
+/reports/
+/remain-demo/
+/remain-demo-[0-9]*/
+/remain-report/
+/remain-report-[0-9]*/
+/demo-report/
+.remain-*/
+
+# Editor, office, and operating-system temporary files
+~$*.xlsx
+.~lock.*#
+*.rs.bk
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+.idea/
+
+# Python virtual environments
+venv/
+env/

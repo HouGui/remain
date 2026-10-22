@@ -1,0 +1,8 @@
+# Keep text portable, including shell scripts checked out on Windows.
+* text=auto eol=lf
+
+# Preserve binary fixtures and documentation assets byte for byte.
+*.pdf binary
+*.xlsx binary
+*.png binary
+*.ttf binary

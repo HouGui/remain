@@ -1,0 +1,129 @@
+name: Release packages
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+defaults:
+  run:
+    shell: bash
+env:
+  CARGO_BUILD_JOBS: 2
+jobs:
+  version:
+    runs-on: ubuntu-22.04
+    outputs:
+      number: ${{ steps.version.outputs.number }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: version
+        shell: bash
+        run: |
+          version=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml)
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          if [[ "$GITHUB_REF_TYPE" = tag ]]; then
+            test "$GITHUB_REF_NAME" = "v$version"
+          fi
+          echo "number=$version" >> "$GITHUB_OUTPUT"
+  docs:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/build-docs
+      - uses: actions/upload-artifact@v7
+        with:
+          name: documentation
+          path: site/
+          if-no-files-found: error
+  package:
+    needs: [version, docs]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            name: linux-x86_64
+          - os: windows-latest
+            name: windows-x86_64
+          - os: macos-14
+            name: macos-aarch64
+    runs-on: ${{ matrix.os }}
+    env:
+      VERSION: ${{ needs.version.outputs.number }}
+      MACOSX_DEPLOYMENT_TARGET: '12.0'
+      REMAIN_DOCS_URL: ${{ vars.REMAIN_DOCS_URL }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Linux libraries
+        if: runner.os == 'Linux'
+        run: bash scripts/install-linux-deps.sh
+      - name: Static Windows C runtime
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: '"RUSTFLAGS=-C target-feature=+crt-static" >> $env:GITHUB_ENV'
+      - uses: ./.github/actions/setup-rust
+        with:
+          components: rustfmt,clippy
+          cache-key: packages
+      - run: cargo fmt --all --check
+        if: runner.os == 'Linux'
+      - run: cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+      - run: cargo test --workspace --locked
+      - run: cargo build --release --locked -p remain-app
+      - uses: actions/download-artifact@v8
+        with:
+          name: documentation
+          path: site
+      - name: Package Linux
+        if: runner.os == 'Linux'
+        run: |
+          bash scripts/package-linux.sh "$VERSION"
+          bash scripts/test-linux-installer.sh "dist/remain-$VERSION-linux-x86_64.tar.gz"
+          dpkg-deb --info "dist/remain_${VERSION}_amd64.deb"
+      - name: Package macOS
+        if: runner.os == 'macOS'
+        run: bash scripts/package-macos.sh "$VERSION"
+      - name: Package Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (!(Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) {
+            choco install innosetup --yes --no-progress
+            if ($LASTEXITCODE -ne 0) { throw 'Inno Setup installation failed' }
+          }
+          ./scripts/package-windows.ps1 -Version $env:VERSION
+      - name: Test Windows install and uninstall
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/test-windows-installer.ps1 -Installer (Get-ChildItem dist/*setup.exe).FullName
+      - uses: actions/upload-artifact@v7
+        with:
+          name: package-${{ matrix.name }}
+          path: dist/*
+          if-no-files-found: error
+          compression-level: 0
+  draft:
+    if: github.ref_type == 'tag'
+    needs: [version, package]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: package-*
+          path: dist
+          merge-multiple: true
+      - name: Checksums and draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          cd dist
+          sha256sum -- * > SHA256SUMS
+          gh release create "$RELEASE_TAG" ./* --draft --verify-tag --title "REMAIN $RELEASE_TAG" --notes-file ../packaging/release-notes.md

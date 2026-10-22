@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=REMAIN
+Comment=Assemble project reports and analyze indicators
+Comment[de]=Projektberichte zusammenführen und Kennzahlen analysieren
+Exec=remain
+Icon=remain
+Terminal=false
+Categories=Office;Science;
+StartupWMClass=remain

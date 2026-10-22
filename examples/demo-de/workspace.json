@@ -1,0 +1,71 @@
+{
+  "schema_version": 2,
+  "title": "Beispielorganisation · Portfoliobericht",
+  "locale": "de",
+  "period": "2026",
+  "annex": {
+    "sheet": "Kennzahlen",
+    "header_row": 1
+  },
+  "groups": [
+    {
+      "id": "discovery",
+      "label": "Forschung und Bildung"
+    },
+    {
+      "id": "applications",
+      "label": "Industrielle Anwendungen"
+    }
+  ],
+  "categories": [
+    {
+      "id": "circularity",
+      "label": "Kreislaufwirtschaft"
+    }
+  ],
+  "projects": "projects.csv",
+  "inputs": {
+    "directory": "{id}",
+    "documents": [
+      {
+        "label": "Bericht",
+        "pattern": "part-*.pdf",
+        "required": true
+      },
+      {
+        "label": "Kennzahlenanlage",
+        "pattern": "annex.xlsx",
+        "required": false
+      }
+    ]
+  },
+  "metrics": [
+    {
+      "id": "publications",
+      "label": "Publikationen",
+      "column": "Publikationen",
+      "aggregation": "sum",
+      "missing": "error",
+      "unit": "",
+      "decimals": 0
+    },
+    {
+      "id": "patents",
+      "label": "Patente",
+      "column": "Patente",
+      "aggregation": "sum",
+      "missing": "error",
+      "unit": "",
+      "decimals": 0
+    },
+    {
+      "id": "quality",
+      "label": "Qualitätswert",
+      "column": "Qualitätswert",
+      "aggregation": "mean",
+      "missing": "skip",
+      "unit": "",
+      "decimals": 2
+    }
+  ]
+}

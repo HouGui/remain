@@ -1,0 +1,106 @@
+{
+  "schema_version": 2,
+  "title": "Example organization · Portfolio report",
+  "locale": "en",
+  "period": "2026",
+  "annex": {
+    "sheet": "KPIs",
+    "header_row": 1
+  },
+  "groups": [
+    {
+      "id": "discovery",
+      "label": "Discovery and education"
+    },
+    {
+      "id": "applications",
+      "label": "Industrial applications"
+    }
+  ],
+  "categories": [
+    {
+      "id": "circularity",
+      "label": "Circularity"
+    }
+  ],
+  "projects": "projects.csv",
+  "inputs": {
+    "directory": "{id}",
+    "documents": [
+      {
+        "label": "Report",
+        "pattern": "part-*.pdf",
+        "required": true
+      },
+      {
+        "label": "KPI annex",
+        "pattern": "annex.xlsx",
+        "required": false
+      }
+    ]
+  },
+  "metrics": [
+    {
+      "id": "publications",
+      "label": "Publications",
+      "column": "Publications",
+      "aggregation": "sum",
+      "missing": "error",
+      "unit": "",
+      "decimals": 0,
+      "breakdown": {
+        "column": "Publication type",
+        "classes": [
+          {
+            "id": "conference",
+            "label": "Conference",
+            "value": "Conference"
+          },
+          {
+            "id": "journal",
+            "label": "Journal",
+            "value": "Journal"
+          },
+          {
+            "id": "book",
+            "label": "Book",
+            "value": "Book"
+          }
+        ]
+      }
+    },
+    {
+      "id": "patents",
+      "label": "Patents",
+      "column": "Patents",
+      "aggregation": "sum",
+      "missing": "error",
+      "unit": "",
+      "decimals": 0
+    },
+    {
+      "id": "quality",
+      "label": "Quality score",
+      "column": "Quality score",
+      "aggregation": "mean",
+      "missing": "skip",
+      "unit": "",
+      "decimals": 2,
+      "breakdown": {
+        "column": "Assessment phase",
+        "classes": [
+          {
+            "id": "baseline",
+            "label": "Baseline",
+            "value": "Baseline"
+          },
+          {
+            "id": "followup",
+            "label": "Follow-up",
+            "value": "Follow-up"
+          }
+        ]
+      }
+    }
+  ]
+}
