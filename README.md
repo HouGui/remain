@@ -12,8 +12,11 @@ by conference or journal type.
 </p>
 
 <p align="center">
-  <strong><a href="https://github.com/HouGui/remain/releases">Downloads</a> · <a href="https://hougui.github.io/remain/">User guide</a> · <a href="https://hougui.github.io/remain/api/">Rust API reference</a></strong>
+  <strong><a href="https://hougui.github.io/remain/">User guide</a> · <a href="https://hougui.github.io/remain/api/">Rust API reference</a></strong>
 </p>
+
+REMAIN was originally developed at the [InnovationCampus Future Mobility (ICM)](https://www.icm-bw.de/en/).
+This open-source version is an independent more-general reimplementation written entirely from scratch.
 
 ## Start Here
 

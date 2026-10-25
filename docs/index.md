@@ -1,8 +1,11 @@
 # Bring project reports together
 
-REMAIN manages and integrates reports from projects and subprojects, with
-optional groups and categories. It assembles PDF reports and printable HTML summaries, with optional analysis
+REMAIN manages and integrates reports from projects and subprojects, with optional groups
+and categories. It assembles PDF reports and printable HTML summaries, with optional analysis
 of key performance indicators (KPIs) submitted in Excel files.
+
+REMAIN was originally developed at the [InnovationCampus Future Mobility (ICM)](https://www.icm-bw.de/en/).
+This open-source version is an independent more-general reimplementation written entirely from scratch.
 
 Get REMAIN from [GitHub Releases](https://github.com/HouGui/remain/releases),
 follow the [installation guide](installation.md), then [try the demo](tutorials.md#try-the-demo).
